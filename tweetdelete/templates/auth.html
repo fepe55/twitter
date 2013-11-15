@@ -9,6 +9,8 @@
   <form method="POST">
     {% csrf_token %}
     {{ data.form.as_p }}
+    <input type="submit" value="enviar" />
+
   </form>
 {% endif %}
 

@@ -29,22 +29,15 @@ def get_api(request):
 
 
 def authenticate(request, api=None):
-    try:
-        api = tweetpony.API(CONSUMER_KEY, CONSUMER_SECRET)
-    except tweetpony.APIError as err:
-        data = {
-            'errors' : [{'code': err.code, 'description' : err.description},],
-        }
-        return data
-        #return render(request, 'auth.html',{ 'data' : data })
-
     if request.POST:
         form = AuthForm(request.POST)
         if form.is_valid():
             # Falla porque es OTRO objeto api al llegar acá
+            token = form.cleaned_data['token']
             verifier = form.cleaned_data['verifier']
             try:
-                api.authenticate(verifier)
+                api = tweetpony.API(CONSUMER_KEY, CONSUMER_SECRET, token, verifier)
+                #api.authenticate(verifier)
             except tweetpony.APIError as err:
                 data = {
                     'errors' : [{'code': err.code, 'description' : err.description},],
@@ -61,6 +54,18 @@ def authenticate(request, api=None):
                     'api' : api,
                 }
                 return data
+
+    else:
+        try:
+            api = tweetpony.API(CONSUMER_KEY, CONSUMER_SECRET)
+        except tweetpony.APIError as err:
+            data = {
+                'errors' : [{'code': err.code, 'description' : err.description},],
+            }
+            return data
+            #return render(request, 'auth.html',{ 'data' : data })
+
+
 
     url = api.get_auth_url()
     form = AuthForm()
