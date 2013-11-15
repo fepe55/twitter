@@ -1,0 +1,14 @@
+{% if data.errors %}
+  <ul>
+  {% for error in data.errors %}
+    <li>{{ error.code }}: {{ error.description }}</li>
+  {% endfor %}
+  </ul>
+{% else %}
+  <a href="{{ data.url }}">Clickity</a>
+  <form method="POST">
+    {% csrf_token %}
+    {{ data.form.as_p }}
+  </form>
+{% endif %}
+
